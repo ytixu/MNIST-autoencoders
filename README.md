@@ -1,1 +1,1 @@
-# MNIST-autoencoders
+# MNIST classifier comparison
