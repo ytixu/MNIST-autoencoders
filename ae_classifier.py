@@ -11,6 +11,7 @@ from keras.layers import Input, Dense, Dropout, Lambda, Activation, Reshape
 
 import utils.data_loader as data_loader
 from autoencoders.models import *
+import utils.viz as viz
 
 # load data
 data1, data2 = data_loader.load(args)
@@ -33,7 +34,7 @@ ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
 				metrics=['mae'])
 
-ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=50, shuffle=True, batch_size=16)
+ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=100, shuffle=True, batch_size=16)
 
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
@@ -135,21 +136,7 @@ F.compile(optimizer='adam',
 
 gen = F.predict(y_test_gen)
 
-
-
 ##############
 # Visualize
 
-num_rows = 2
-num_cols = 5
-f, ax = plt.subplots(num_rows, num_cols, figsize=(12,5),
-					gridspec_kw={'wspace':0.03, 'hspace':0.4}, 
-					squeeze=True)
-for r in range(num_rows):
-	for c in range(num_cols):
-		image_index = r * num_cols + c
-		ax[r,c].axis("off")
-		ax[r,c].imshow(gen[image_index], cmap='gray')
-		ax[r,c].set_title('No. %d' % image_index)
-plt.show()
-plt.close()
+viz.plot(gen)
