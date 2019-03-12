@@ -28,12 +28,10 @@ BATCH_SIZE = 64
 # Autoencoder
 if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
-	EPOCHS = 50
-	BATCH_SIZE = 64
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 10
-	BATCH_SIZE = 128
+	EPOCHS = 50
+	BATCH_SIZE = 64
 
 ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
@@ -79,9 +77,6 @@ def get_complete_func(x_train_, y_train_):
 	a_train = ae_model.encoder.predict(x_train_)
 	b_train = ae_model.encoder.predict(y_train_)
 
-	# diff = b_train - a_train
-	# print np.mean(diff, axis=0), np.std(diff, axis=0)
-
 	g_input = Input(shape=(LATENT_SIZE,), name='g_input')
 	g_dense = Dense(LATENT_SIZE, activation='sigmoid', use_bias=False, name='g_dense')
 	g_layer = g_dense(g_input)
@@ -99,49 +94,83 @@ def get_complete_func(x_train_, y_train_):
 	
 	return decoder_layer_
 
+def vector_addition(x_train_, y_train_):
+	# TODO : merge this to the upper function
+	a_train = ae_model.encoder.predict(x_train_)
+	b_train = ae_model.encoder.predict(y_train_)
+
+	return np.mean(b_train - a_train, axis=0)
 
 
 ##############
 def classification(x_train_, xy_train_):
 	class_layer = get_complete_func(x_train_, xy_train_)
 
-	drop_x = Lambda(lambda x: x[:,-10:], output_shape=(10,), name='drop_lambda')(class_layer)
-	class_output = Activation('softmax', name='softmax')(drop_x)
+	drop_x = Lambda(lambda x: x[:,-10:], output_shape=(10,), name='drop_lambda')
+	class_output = Activation('softmax', name='softmax')
 
-	F = Model(ae_model.encoder_input, class_output)
+	F_layers = class_output(drop_x(class_layer))
+	F = Model(ae_model.encoder_input, F_layers)
 	F.compile(optimizer='adam',
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
 
 	score = F.evaluate(x_test, y_test_orig, verbose=0)
+	print 'Forward network---'
 	print 'Test loss:', score[0]
 	print 'Test accuracy:', score[1]
 
-# print 'Classification via matching'
-# classification(x_train, y_train)
+	x_input = ae_model.encoder.predict(x_test)
+	x_pred = x_input[:] + vector_addition(x_train_, xy_train_)
+	F_input = Input(shape=(LATENT_SIZE,), name='va_input')
+	F_layers = class_output(drop_x(ae_model.decoder_layers(F_input)))
+	F = Model(F_input, F_layers)
+
+	F.compile(optimizer='adam',
+				loss='sparse_categorical_crossentropy',
+				metrics=['accuracy'])
+
+	score = F.evaluate(x_pred, y_test_orig, verbose=0)
+	print 'Vector addition---'
+	print 'Test loss:', score[0]
+	print 'Test accuracy:', score[1]
+
+
+
+print 'Classification via matching'
+classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-# print 'Classification via completion (all)'
-# all_x_train = np.concatenate((x_train, y_train), axis=0)
-# all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-# classification(all_x_train, all_y_train)
+print 'Classification via completion (all)'
+all_x_train = np.concatenate((x_train, y_train), axis=0)
+all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+classification(all_x_train, all_y_train)
 
 
 ##############
 print 'Generation'
 
 gen_layer = get_complete_func(y_train, xy_train)
-drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')(gen_layer)
-gen_output = Reshape((IMG_SIZE, IMG_SIZE))(drop_y)
-
-F = Model(ae_model.encoder_input, gen_output)
+drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')
+gen_output = Reshape((IMG_SIZE, IMG_SIZE))
+gen_layers = gen_output(drop_y(gen_layer))
+F = Model(ae_model.encoder_input, gen_layers)
 F.compile(optimizer='adam',
 			loss='sparse_categorical_crossentropy',
 			metrics=['accuracy'])
 
 gen = F.predict(y_test_gen)
+viz.plot(gen)
 
-##############
-# Visualize
+x_input = ae_model.encoder.predict(y_test_gen)
+x_pred = x_input[:] + vector_addition(y_train, xy_train)
+F_input = Input(shape=(LATENT_SIZE,), name='va_input')
+F_layers = gen_output(drop_y(ae_model.decoder_layers(F_input)))
+F = Model(F_input, F_layers)
 
+F.compile(optimizer='adam',
+			loss='sparse_categorical_crossentropy',
+			metrics=['accuracy'])
+
+gen = F.predict(x_input)
 viz.plot(gen)
