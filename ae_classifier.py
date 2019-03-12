@@ -30,7 +30,7 @@ if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 20
+	EPOCHS = 50
 	BATCH_SIZE = 64
 
 ae_model.ae.compile(optimizer='adam',
