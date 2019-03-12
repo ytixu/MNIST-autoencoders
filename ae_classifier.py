@@ -21,20 +21,25 @@ x_train, y_train, xy_train, x_xy_y_train, x_test, y_test_gen = data2
 IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
 LATENT_SIZE = 32
-
+EPOCHS = 50
+BATCH_SIZE = 64
 
 ##############
 # Autoencoder
 if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
+	EPOCHS = 50
+	BATCH_SIZE = 64
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
+	EPOCHS = 10
+	BATCH_SIZE = 128
 
 ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
 				metrics=['mae'])
 
-ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=50, shuffle=True, batch_size=64)
+ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE)
 
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
