@@ -50,19 +50,19 @@ Input one-hot encoded label, output handwritten digit.
   <tr>
     <td rowspan="2">Flatten</td>
     <td>End-to-End</td>
-    <td>![Digit generation using end-to-end model](./images/flatten_generation_E2E.png)</td>
+    <td><img src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td>Pattern completion</td>
-    <td>![Digit generation using pattern completion](./images/flatten_generation_PCL.png)</td>
+    <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td rowspan="2">Flatten</td>
     <td>End-to-End</td>
-    <td>![Digit generation using end-to-end model](./images/cnn_generation_E2E.png)</td>
+    <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td>Pattern completion</td>
-    <td>![Digit generation using pattern completion](./images/cnn_generation_PCL.png)</td>
+    <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
   </tr>
 </table>
