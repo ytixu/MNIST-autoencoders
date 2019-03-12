@@ -34,7 +34,7 @@ ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
 				metrics=['mae'])
 
-ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=100, shuffle=True, batch_size=16)
+ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=50, shuffle=True, batch_size=64)
 
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
@@ -55,7 +55,7 @@ def feature_extraction():
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
 
-	ext.fit(ext_train, y_train_orig, epochs=4, shuffle=True, batch_size=16)
+	ext.fit(ext_train, y_train_orig, epochs=5, shuffle=True, batch_size=16)
 
 	score = ext.evaluate(ext_test, y_test_orig, verbose=0)
 	print 'Test loss:', score[0]
@@ -87,7 +87,7 @@ def get_complete_func(x_train_, y_train_):
 					loss='mean_squared_error',
 					metrics=['mae'])
 
-	g.fit(a_train, b_train, epochs=4, shuffle=True, batch_size=16)
+	g.fit(a_train, b_train, epochs=5, shuffle=True, batch_size=16)
 
 	g_layer_ = g_dense(ae_model.encoder_layer)
 	decoder_layer_ = ae_model.decoder_layers(g_layer_)
@@ -112,14 +112,14 @@ def classification(x_train_, xy_train_):
 	print 'Test loss:', score[0]
 	print 'Test accuracy:', score[1]
 
-print 'Classification via matching'
-classification(x_train, y_train)
+# print 'Classification via matching'
+# classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-print 'Classification via completion (all)'
-all_x_train = np.concatenate((x_train, y_train), axis=0)
-all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-classification(all_x_train, all_y_train)
+# print 'Classification via completion (all)'
+# all_x_train = np.concatenate((x_train, y_train), axis=0)
+# all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+# classification(all_x_train, all_y_train)
 
 
 ##############
