@@ -30,7 +30,7 @@ if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 50
+	EPOCHS = 20
 	BATCH_SIZE = 64
 
 ae_model.ae.compile(optimizer='adam',
@@ -137,40 +137,44 @@ def classification(x_train_, xy_train_):
 
 
 
-print 'Classification via matching'
-classification(x_train, y_train)
+# print 'Classification via matching'
+# classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-print 'Classification via completion (all)'
-all_x_train = np.concatenate((x_train, y_train), axis=0)
-all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-classification(all_x_train, all_y_train)
+# print 'Classification via completion (all)'
+# all_x_train = np.concatenate((x_train, y_train), axis=0)
+# all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+# classification(all_x_train, all_y_train)
 
 
 ##############
 print 'Generation'
 
-gen_layer = get_complete_func(y_train, xy_train)
-drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')
-gen_output = Reshape((IMG_SIZE, IMG_SIZE))
-gen_layers = gen_output(drop_y(gen_layer))
-F = Model(ae_model.encoder_input, gen_layers)
-F.compile(optimizer='adam',
-			loss='sparse_categorical_crossentropy',
-			metrics=['accuracy'])
+def generation(y_train_, xy_train_):
+	gen_layer = get_complete_func(y_train_, xy_train_)
+	drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')
+	gen_output = Reshape((IMG_SIZE, IMG_SIZE))
 
-gen = F.predict(y_test_gen)
-viz.plot(gen)
+	gen_layers = gen_output(drop_y(gen_layer))
+	F = Model(ae_model.encoder_input, gen_layers)
+	F.compile(optimizer='adam',
+				loss='sparse_categorical_crossentropy',
+				metrics=['accuracy'])
 
-x_input = ae_model.encoder.predict(y_test_gen)
-x_pred = x_input[:] + vector_addition(y_train, xy_train)
-F_input = Input(shape=(LATENT_SIZE,), name='va_input')
-F_layers = gen_output(drop_y(ae_model.decoder_layers(F_input)))
-F = Model(F_input, F_layers)
+	gen = F.predict(y_test_gen)
+	viz.plot(gen)
 
-F.compile(optimizer='adam',
-			loss='sparse_categorical_crossentropy',
-			metrics=['accuracy'])
+	x_input = ae_model.encoder.predict(y_test_gen)
+	x_pred = x_input[:] + vector_addition(y_train_, xy_train_)
+	F_input = Input(shape=(LATENT_SIZE,), name='va_input')
+	F_layers = gen_output(drop_y(ae_model.decoder_layers(F_input)))
+	F = Model(F_input, F_layers)
 
-gen = F.predict(x_input)
-viz.plot(gen)
+	F.compile(optimizer='adam',
+				loss='sparse_categorical_crossentropy',
+				metrics=['accuracy'])
+
+	gen = F.predict(x_input)
+	viz.plot(gen)
+
+generation(y_train, xy_train)
