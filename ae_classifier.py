@@ -32,8 +32,8 @@ if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 50
-	BATCH_SIZE = 128
+	EPOCHS = 10
+	BATCH_SIZE = 64
 
 ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
@@ -93,7 +93,7 @@ def get_complete_func(x_train_, y_train_):
 	g_layer_ = g_dense(ae_model.encoder_layer)
 	decoder_layer_ = ae_model.decoder_layers(g_layer_)
 	
-	return decoder_layer_
+	return decoder_layer_, g_layer_
 
 def vector_addition(x_train_, y_train_):
 	a_train = ae_model.encoder.predict(x_train_)
@@ -104,7 +104,7 @@ def vector_addition(x_train_, y_train_):
 
 ##############
 def classification(x_train_, xy_train_):
-	class_layer = get_complete_func(x_train_, xy_train_)
+	class_layer, _ = get_complete_func(x_train_, xy_train_)
 
 	drop_x = Lambda(lambda x: x[:,-10:], output_shape=(10,), name='drop_lambda')
 	class_output = Activation('softmax', name='softmax')
@@ -145,16 +145,16 @@ print 'Generation'
 def neighbours(z, diff_std, layers=1):
 	z_pred = np.zeros(((layers*2+1)**2, z.shape[-1]))
 	z_pred[0] = z
-	for layer in range(layers):
-		n = (layer+1)*2
+	for layer in range(1,layers+1):
+		n = layer*2
 		N = (n+1)**2-1
 		for i in range(n*4):
-			z_pred[N-i] = np.random.normal(loc=z, scale=diff_std*layer/2, size=None)
+			z_pred[N-i] = np.random.normal(loc=z, scale=diff_std*layer*0.5, size=None)
 	return z_pred
 
 
 def generation(y_train_, xy_train_):
-	gen_layer = get_complete_func(y_train_, xy_train_)
+	gen_layer, z_layer = get_complete_func(y_train_, xy_train_)
 	drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')
 	gen_output = Reshape((IMG_SIZE, IMG_SIZE))
 
@@ -167,6 +167,7 @@ def generation(y_train_, xy_train_):
 	gen = F.predict(y_test_gen)
 	viz.plot(gen)
 
+	# Vector addition
 	diff_mean, diff_std = vector_addition(y_train_, xy_train_)
 
 	x_input = ae_model.encoder.predict(y_test_gen)
@@ -184,12 +185,18 @@ def generation(y_train_, xy_train_):
 	gen = F.predict(x_pred)
 	viz.plot(gen)
 
+	# Neighbour
+	G = Model(ae_model.encoder_input, z_layer)
+	G.compile(optimizer='adam',
+				loss='sparse_categorical_crossentropy',
+				metrics=['accuracy'])
+	x_input = G.predict(y_test_gen)
+
 	for i in range(10):
 		print i
-		g_input = neighbours(x_pred[i], diff_std, layers=2)
+		g_input = neighbours(x_input[i], diff_std, layers=2)
 		gen = F.predict(g_input)
 		viz.plot_number(gen)
-
 
 
 print 'Standard feature extraction'

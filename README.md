@@ -1,11 +1,15 @@
-# MNIST via pattern completion
+# MNIST via Pattern Completion Learning
+
+Pattern completion learning (PCL) is an inference strategy where given data pairs (X,Y), a PCL model tries to learn correlation between the latent representations of the partial pattern (X) and the complete pattern (XY).
 
 
 ### Autoencoding
 
-Model | Loss (`binary_cross_entropy`) | MAE
+Model | Loss (`binary_cross_entropy`) | L1 Distance
 --- | --- | ----
-Flatten | 0.1108 | 0.0493
+Flatten | 0.1340 | 0.0683
+CNN |  0.1019 | 0.0399
+
 
 
 ### Classification 
@@ -23,40 +27,59 @@ Input handwritten digit, output class as a probability vector
     <td>0.9077</td>
   </tr>
   <tr>
-    <td>Pattern matching</td>
-    <td>0.7823</td>
+    <td>Pattern matching (FN)</td>
+    <td>0.8304</td>
+  </tr>
+  <tr>
+    <td>Pattern matching (ADD)</td>
+    <td>0.5569</td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td>0.9353</td>
+    <td>0.9120</td>
+  </tr>
+  <tr>
+    <td>Pattern completion (ADD)</td>
+    <td>0.9126</td>
   </tr>
   <tr>
     <td>Pattern completion (FN, all)</td>
-    <td>0.9093</td>
+    <td>0.8948</td>
+  </tr>
+  <tr>
+    <td>Pattern completion (ADD, all)</td>
+    <td>0.8152</td>
   </tr>
   <tr>
     <td rowspan="3">CNN</td>
     <td>Feature extraction</td>
-    <td>0.8945</td>
+    <td>0.8800</td>
   </tr>
-  <!-- <tr>
-    <td>Pattern matching</td>
-    <td>0.7823</td>
-  </tr> -->
+  <tr>
+    <td>Pattern matching (FN)</td>
+    <td>0.5680</td>
+  </tr>
+  <tr>
+    <td>Pattern matching (ADD)</td>
+    <td>0.3478</td>
+  </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td>0.9467</td>
+    <td>0.9666</td>
   </tr>
   <tr>
     <td>Pattern completion (ADD)</td>
-    <td>0.9491</td>
+    <td>0.9679</td>
   </tr>
- <!--  <tr>
-    <td>Pattern completion (all)</td>
-    <td>0.9093</td>
-  </tr> -->
+  <tr>
+    <td>Pattern completion (FN, all)</td>
+    <td>0.8865</td>
+  </tr>
+  <tr>
+    <td>Pattern completion (ADD, all)</td>
+    <td>0.6913</td>
+  </tr>
 </table>
-
 
 
 ### Generation from labels 
@@ -74,7 +97,7 @@ Input one-hot encoded label, output handwritten digit.
     <td><img src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
-    <td>Pattern completion</td>
+    <td>Pattern completion (FN)</td>
     <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
@@ -83,7 +106,7 @@ Input one-hot encoded label, output handwritten digit.
     <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
-    <td>Pattern completion</td>
+    <td>Pattern completion (FN)</td>
     <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
   </tr>
 </table>

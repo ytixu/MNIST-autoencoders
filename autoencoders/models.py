@@ -10,15 +10,16 @@ class Flatten_AE():
 	def __init__(self, input_size, latent_size):
 		self.encoder_input = Input(shape=(input_size,), name='encoder_input')
 		encoder_layer = Dense(latent_size*3, activation='relu', name='encoder_dense_1')(self.encoder_input)
-		# encoder_layer = Dropout(0.2, name='encoder_drop_1')(encoder_layer)
+		encoder_layer = Dropout(0.2, name='encoder_drop_1')(encoder_layer)
 		encoder_layer = Dense(latent_size*2, activation='relu', name='encoder_dense_2')(encoder_layer)
-		# encoder_layer = Dropout(0.2, name='encoder_drop_2')(encoder_layer)
+		encoder_layer = Dropout(0.2, name='encoder_drop_2')(encoder_layer)
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='encoder_dense_3')(encoder_layer)
 
 		decode_dense_1 = Dense(latent_size*2, activation='relu', name='decoder_dense_1')
+		decode_drop = Dropout(0.2, name='encoder_drop')
 		decode_dense_2 = Dense(latent_size*3, activation='relu', name='decoder_dense_2')
 		decode_dense_3 = Dense(input_size, activation='sigmoid', name='decoder_dense_3')
-		self.decoder_layers = lambda x: decode_dense_3(decode_dense_2(decode_dense_1(x)))
+		self.decoder_layers = lambda x: decode_dense_3(decode_drop(decode_dense_2(decode_drop(decode_dense_1(x)))))
 		# self.decoder_layers = lambda x: decode_dense_3(x)
 		decoder_layer = self.decoder_layers(self.encoder_layer)
 
@@ -94,11 +95,11 @@ class CNN_AE():
 		x = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
 		x = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
-		x = Dropout(0.25)(x)
+		x = Dropout(0.2)(x) #0.25
 		x = Flatten(name='enc_flattent')(x)
 		# x = Dense(3136, activation='relu')(x)
 		x = Dense(128, activation='relu')(x)
-		x = Dropout(0.5)(x)
+		x = Dropout(0.2)(x) # 0.5
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='enc_dense_2')(x)
 
 		dec_0 = Dense(128, activation='relu', name='dec_dense_1')
