@@ -22,7 +22,7 @@ Input handwritten digit, output class as a probability vector
     <th>Accuracy</th>
   </tr>
   <tr>
-    <td rowspan="4">Flatten</td>
+    <td rowspan="7">Flatten</td>
     <td>Feature extraction</td>
     <td>0.9077</td>
   </tr>
@@ -51,7 +51,7 @@ Input handwritten digit, output class as a probability vector
     <td>0.8152</td>
   </tr>
   <tr>
-    <td rowspan="3">CNN</td>
+    <td rowspan="7">CNN</td>
     <td>Feature extraction</td>
     <td>0.8800</td>
   </tr>
