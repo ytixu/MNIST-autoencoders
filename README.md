@@ -113,11 +113,11 @@ Input one-hot encoded label, output handwritten digit.
 
 <table>
   <tr>
-    <tr>Flatten</tr>
-    <tr>CNN</tr>
+    <td>Flatten</td>
+    <td>CNN</td>
   </tr>
   <tr>
-    <tr><img src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></tr>
-    <tr><img src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></tr>
+    <td><img src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
