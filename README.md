@@ -98,7 +98,7 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
+    <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td rowspan="2">CNN</td>
@@ -107,6 +107,17 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using end-to-end model"></td>
+    <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <tr>Flatten</tr>
+    <tr>CNN</tr>
+  </tr>
+  <tr>
+    <tr><img src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></tr>
+    <tr><img src="./images/cnn/cnn_neighbours.png" alt="Digit generation using PCL model"></tr>
   </tr>
 </table>
