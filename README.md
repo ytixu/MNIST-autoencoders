@@ -111,6 +111,8 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
 </table>
 
+Adding gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. 
+
 <table>
   <tr>
     <td>Flatten</td>
