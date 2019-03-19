@@ -118,6 +118,6 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
   <tr>
     <tr><img src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></tr>
-    <tr><img src="./images/cnn/cnn_neighbours.png" alt="Digit generation using PCL model"></tr>
+    <tr><img src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></tr>
   </tr>
 </table>
