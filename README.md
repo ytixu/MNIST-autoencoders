@@ -1,6 +1,8 @@
-# MNIST via Pattern Completion Learning
+# MNIST with Pattern Completion Learning
 
 Pattern completion learning (PCL) is an inference strategy where given data pairs (X,Y), a PCL model tries to learn correlation between the latent representations of the partial pattern (X) and the complete pattern (XY). The main advantage of PCL is after learning the latent representations, downstream tasks can be learn fast and with high quality. 
+
+#### Our procedure 
 
 For MNIST dataset, X represents the handwritten digit image (28x28 matrix) and Y, the image label (10 dimentional one-hot vector). XY is the contatenation of the two data types. 
 
@@ -79,7 +81,7 @@ Input handwritten digit, output class as a probability vector.
     <td>0.9723</td>
   </tr>
   <tr>
-    <td rowspan="2">Pattern completion (learn both X --> XY and Y --> XY together)</td>
+    <td rowspan="2">Pattern completion <br>(learn both X --> XY and Y --> XY together)</td>
     <td>SDL</td>
     <td>0.9097</td>
     <td>0.9067</td>
@@ -129,7 +131,7 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
 </table>
 
-Adding gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. 
+Adding gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. (STD is the standard deviation of the difference computed for ADD.)
 
 <table>
   <tr>
@@ -141,3 +143,8 @@ Adding gaussian noise to the latent representation of the generated digit. The c
     <td><img width="400px" src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
+
+
+## Remarks
+
+- PCL requires good latent representations to guarantee high performance in downstream tasks.
