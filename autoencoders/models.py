@@ -103,8 +103,7 @@ class CNN_AE():
 		x = Flatten(name='enc_flattent')(x)
 		# x = Dense(3136, activation='relu')(x)
 		x = Dense(128, activation='relu')(x)
-		# x = Dropout(0.2)(x) # 0.5
-		x = BatchNormalization()(x)
+		x = Dropout(0.1)(x) # 0.5
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='enc_dense_2')(x)
 
 		dec_0 = Dense(128, activation='relu', name='dec_dense_1')
