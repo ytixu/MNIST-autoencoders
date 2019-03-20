@@ -19,7 +19,7 @@ Input handwritten digit, output class as a probability vector
   <tr>
     <th rowspan="2">Learning strategy</th>
     <th rowspan="2">Latent mapping</th>
-    <th>Accuracy</th>
+    <th colspan="2">Accuracy</th>
   </tr>
   <tr>
     <td>Flatten</td>
