@@ -23,7 +23,7 @@ IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
 LATENT_SIZE = 32
 EPOCHS = 50
-EPOCHS_COMPLETE = 5
+EPOCHS_COMPLETE = 4
 BATCH_SIZE = 64
 
 ##############

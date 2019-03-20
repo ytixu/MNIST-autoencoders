@@ -16,10 +16,10 @@ class Flatten_AE():
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='encoder_dense_3')(encoder_layer)
 
 		decode_dense_1 = Dense(latent_size*2, activation='relu', name='decoder_dense_1')
-		decode_drop = Dropout(0.2, name='encoder_drop')
+		# decode_drop = Dropout(0.2, name='encoder_drop')
 		decode_dense_2 = Dense(latent_size*3, activation='relu', name='decoder_dense_2')
 		decode_dense_3 = Dense(input_size, activation='sigmoid', name='decoder_dense_3')
-		self.decoder_layers = lambda x: decode_dense_3(decode_drop(decode_dense_2(decode_drop(decode_dense_1(x)))))
+		self.decoder_layers = lambda x: decode_dense_3(decode_dense_2(decode_dense_1(x)))
 		# self.decoder_layers = lambda x: decode_dense_3(x)
 		decoder_layer = self.decoder_layers(self.encoder_layer)
 

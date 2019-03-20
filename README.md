@@ -7,8 +7,8 @@ Pattern completion learning (PCL) is an inference strategy where given data pair
 
 Model | Loss (`binary_cross_entropy`) | L1 Distance
 --- | --- | ----
-Flatten | 0.1340 | 0.0683
-CNN |  0.1019 | 0.0399
+Flatten | 0.1109 | 0.0492
+CNN |  0.0977 | 0.0375
 
 
 
@@ -24,31 +24,31 @@ Input handwritten digit, output class as a probability vector
   <tr>
     <td rowspan="7">Flatten</td>
     <td>Feature extraction</td>
-    <td>0.9077</td>
+    <td>0.8989</td>
   </tr>
   <tr>
     <td>Pattern matching (FN)</td>
-    <td>0.8304</td>
+    <td>0.7733</td>
   </tr>
   <tr>
     <td>Pattern matching (ADD)</td>
-    <td>0.5569</td>
+    <td>0.7457</td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td>0.9120</td>
+    <td>0.9212</td>
   </tr>
   <tr>
     <td>Pattern completion (ADD)</td>
-    <td>0.9126</td>
+    <td>0.9240</td>
   </tr>
   <tr>
     <td>Pattern completion (FN, all)</td>
-    <td>0.8948</td>
+    <td>0.9097</td>
   </tr>
   <tr>
     <td>Pattern completion (ADD, all)</td>
-    <td>0.8152</td>
+    <td>0.8498</td>
   </tr>
   <tr>
     <td rowspan="7">CNN</td>
@@ -92,22 +92,26 @@ Input one-hot encoded label, output handwritten digit.
     <th>Result</th>
   </tr>
   <tr>
-    <td rowspan="2">Flatten</td>
+    <td rowspan="3">Flatten</td>
     <td>End-to-End</td>
-    <td><img src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+    <td><img width="400px" src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+  </tr>
+  <tr>
+    <td>Pattern completion (ADD)</td>
+    <td><img width="400px" src="./images/flatten_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
+    <td><img width="400px" src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td rowspan="2">CNN</td>
     <td>End-to-End</td>
-    <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+    <td><img width="400px" src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
+    <td><img width="400px" src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
 
