@@ -2,7 +2,7 @@ import numpy as np
 
 import keras
 from keras.models import Model
-from keras.layers import Input, Dense, Dropout, Lambda, Activation, Reshape, Flatten
+from keras.layers import Input, Dense, Dropout, Lambda, Activation, Reshape, Flatten, BatchNormalization
 from keras.layers import Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose
 
 class Flatten_AE():
@@ -33,10 +33,13 @@ class Flatten_AE():
 # 		x = Reshape((img_size, img_size, 1), name='enc_reshape')(x)
 # 		x = Conv2D(16, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
 # 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_1')(x)
+# 		# x = BatchNormalization()(x)
 # 		x = Conv2D(8, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
 # 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
+# 		# x = BatchNormalization()(x)
 # 		x = Conv2D(8, (3, 3), activation='relu', padding='same', name='enc_conv_3')(x)
 # 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_3')(x)
+# 		x = BatchNormalization()(x)
 # 		# at this point the representation is (4, 4, 8) i.e. 128-dimensional
 		
 # 		x = Flatten(name='enc_flattent')(x)
@@ -95,11 +98,13 @@ class CNN_AE():
 		x = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
 		x = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
-		x = Dropout(0.2)(x) #0.25
+		# x = Dropout(0.2)(x) #0.25
+		x = BatchNormalization()(x)
 		x = Flatten(name='enc_flattent')(x)
 		# x = Dense(3136, activation='relu')(x)
 		x = Dense(128, activation='relu')(x)
-		x = Dropout(0.2)(x) # 0.5
+		# x = Dropout(0.2)(x) # 0.5
+		x = BatchNormalization()(x)
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='enc_dense_2')(x)
 
 		dec_0 = Dense(128, activation='relu', name='dec_dense_1')

@@ -17,40 +17,55 @@ Input handwritten digit, output class as a probability vector
 
 <table>
   <tr>
+    <th rowspan="2">Learning strategy</th>
+    <th rowspan="2">Latent mapping</th>
+    <th rowspan="2">Accuracy</th>
     <th>Model</th>
-    <th>Method</th>
-    <th>Accuracy</th>
   </tr>
   <tr>
-    <td rowspan="7">Flatten</td>
+    <td>Flatten</td>
+    <td>CNN</td>
+  </tr>
+  <tr>
     <td>Feature extraction</td>
+    <td>-</td>
     <td>0.8989</td>
+    <td>0.8362</td>
   </tr>
   <tr>
-    <td>Pattern matching (FN)</td>
+    <td rowspan="2">Pattern matching</td>
+    <td>FN</td>
     <td>0.7733</td>
+    <td>0.7035</td>
   </tr>
   <tr>
-    <td>Pattern matching (ADD)</td>
+    <td>(ADD)</td>
     <td>0.7457</td>
+    <td>0.5832</td>
   </tr>
   <tr>
-    <td>Pattern completion (FN)</td>
+    <td rowspan="2">Pattern completion</td>
+    <td>FN</td>
     <td>0.9212</td>
+    <td>0.9741</td>
   </tr>
   <tr>
-    <td>Pattern completion (ADD)</td>
+    <td>(ADD)</td>
     <td>0.9240</td>
+    <td>0.9723</td>
   </tr>
   <tr>
-    <td>Pattern completion (FN, all)</td>
+    <td rowspan="2">Pattern completion (all)</td>
+    <td>FN</td>
     <td>0.9097</td>
+    <td>0.9067</td>
   </tr>
   <tr>
-    <td>Pattern completion (ADD, all)</td>
+    <td>(ADD)</td>
     <td>0.8498</td>
+    <td>0.7641</td>
   </tr>
-  <tr>
+  <!-- <tr>
     <td rowspan="7">CNN</td>
     <td>Feature extraction</td>
     <td>0.8800</td>
@@ -78,7 +93,7 @@ Input handwritten digit, output class as a probability vector
   <tr>
     <td>Pattern completion (ADD, all)</td>
     <td>0.6913</td>
-  </tr>
+  </tr> -->
 </table>
 
 
@@ -108,6 +123,10 @@ Input one-hot encoded label, output handwritten digit.
     <td rowspan="2">CNN</td>
     <td>End-to-End</td>
     <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+  </tr>
+  <tr>
+    <td>Pattern completion (ADD)</td>
+    <td><img src="./images/cnn_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>

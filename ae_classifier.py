@@ -39,7 +39,11 @@ ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
 				metrics=['mae'])
 
-ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE)
+if args['load_path']:
+	ae_model.ae.load_weights(args['load_path'])
+else:
+	ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE)
+	# ae_model.ae.save(args['save_path'])
 
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
