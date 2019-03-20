@@ -8,7 +8,7 @@ Pattern completion learning (PCL) is an inference strategy where given data pair
 Model | Loss (`binary_cross_entropy`) | L1 Distance
 --- | --- | ----
 Flatten | 0.1109 | 0.0492
-CNN |  0.0977 | 0.0375
+CNN |  0.0897 | 0.0314
 
 
 
@@ -19,8 +19,7 @@ Input handwritten digit, output class as a probability vector
   <tr>
     <th rowspan="2">Learning strategy</th>
     <th rowspan="2">Latent mapping</th>
-    <th rowspan="2">Accuracy</th>
-    <th>Model</th>
+    <th>Accuracy</th>
   </tr>
   <tr>
     <td>Flatten</td>
@@ -120,7 +119,7 @@ Input one-hot encoded label, output handwritten digit.
     <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
-    <td rowspan="2">CNN</td>
+    <td rowspan="3">CNN</td>
     <td>End-to-End</td>
     <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
