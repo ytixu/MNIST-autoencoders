@@ -94,24 +94,24 @@ Input one-hot encoded label, output handwritten digit.
   <tr>
     <td rowspan="3">Flatten</td>
     <td>End-to-End</td>
-    <td><img width="400px" src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+    <td><img src="./images/flatten_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td>Pattern completion (ADD)</td>
-    <td><img width="400px" src="./images/flatten_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
+    <td><img src="./images/flatten_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img width="400px" src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
+    <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
     <td rowspan="2">CNN</td>
     <td>End-to-End</td>
-    <td><img width="400px" src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
+    <td><img src="./images/cnn_generation_E2E.png" alt="Digit generation using end-to-end model"></td>
   </tr>
   <tr>
     <td>Pattern completion (FN)</td>
-    <td><img width="400px" src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
+    <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
 
@@ -123,7 +123,7 @@ Adding gaussian noise to the latent representation of the generated digit. The c
     <td>CNN</td>
   </tr>
   <tr>
-    <td><img src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></td>
-    <td><img src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img width="400px" src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img width="400px" src="./images/cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
