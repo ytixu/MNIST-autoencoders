@@ -1,11 +1,17 @@
+import os
 import argparse
 import time
+
+def get_dir(folder):
+	directory = './out/'+folder
+	if not os.path.exists(directory):
+		os.makedirs(directory)
+	return directory+'/'
 
 def get_timestamp_filename():
 	return str(int(time.time()))+'.hdf5'
 
 def parse():
-	out_path = './out/'
 	model_list = ['flatten', 'cnn']
 
 	parser = argparse.ArgumentParser()
@@ -16,8 +22,8 @@ def parse():
 	args = vars(parser.parse_args())
  
  	if args['model'] == 'cnn':
- 		args['save_path'] = out_path+'cnn/'+get_timestamp_filename()
+ 		args['save_path'] = get_dir('cnn')+get_timestamp_filename()
  	else:
- 		args['save_path'] = out_path+'flatten/'+get_timestamp_filename()
+ 		args['save_path'] = get_dir('flatten')+get_timestamp_filename()
 
  	return args

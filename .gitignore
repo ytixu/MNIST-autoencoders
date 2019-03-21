@@ -1,5 +1,5 @@
 MNIST_data/*
 *.pyc
 */*.pyc
-./out/*
-./out/*/*
+out/*
+out/*/*

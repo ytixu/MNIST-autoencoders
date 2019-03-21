@@ -100,6 +100,7 @@ Input handwritten digit, output class as a probability vector.
 </table>
 
 
+
 ### Generation from labels 
 Input one-hot encoded label, output handwritten digit.
 
@@ -137,7 +138,9 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
 </table>
 
-Adding random gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. (STD is the standard deviation of the difference computed for ADD.)
+#### Adding noise
+
+Adding random gaussian noise to the latent representation of the generated digit, output from SDL. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. (STD is the standard deviation of the difference computed for ADD.)
 
 <table>
   <tr>
@@ -151,6 +154,8 @@ Adding random gaussian noise to the latent representation of the generated digit
 </table>
 
 
-## Remarks
+## Issues
 
 - PCL requires good latent representations to guarantee high performance for downstream tasks.
+<!-- - Digit images generated through PCL is fixed by the input number class. This is different to the generative adversarial framework (or GAN) which can output multiple variations for one number class. 
+- Adding noise the output of SDL can generate blurry or invalid digits, which is not comparable to GAN. However, PCL is much easier to train than GAN. -->

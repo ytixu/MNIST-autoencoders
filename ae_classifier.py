@@ -23,7 +23,7 @@ IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
 LATENT_SIZE = 32
 EPOCHS = 50
-EPOCHS_COMPLETE = 5
+EPOCHS_COMPLETE = 10
 BATCH_SIZE = 64
 
 ##############
@@ -48,7 +48,6 @@ else:
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
 print 'Test accuracy:', score[1]
-
 
 def relu_advanced(x):
     return K.relu(x, max_value=1)
@@ -106,6 +105,18 @@ def vector_addition(x_train_, y_train_):
 	return np.mean(diff, axis=0), np.std(diff, axis=0)
 
 
+def get_failed_classes(F):
+	predict_labels = F.predict(x_test) 
+	predict_labels = predict_labels.argmax(axis=-1)
+	inc_idx = np.nonzero(predict_labels != y_test_orig)[0]
+	print '# of incorrect predictions: %d/%d' %(len(inc_idx), len(y_test_orig))
+	
+	inc = np.zeros((100,IMG_SIZE,IMG_SIZE))
+	for i in inc_idx:
+		inc[predict_labels[i]*10+y_test_orig[i]] = np.reshape(x_test[i,:-10], (IMG_SIZE,IMG_SIZE))
+
+	viz.plot_matrix(inc, 'Examples of failed predictions (x=True, y=Predicted)')
+
 ##############
 def classification(x_train_, xy_train_):
 	class_layer, _ = get_complete_func(x_train_, xy_train_)
@@ -119,6 +130,8 @@ def classification(x_train_, xy_train_):
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
 
+	get_failed_classes(F)
+
 	score = F.evaluate(x_test, y_test_orig, verbose=0)
 	print 'Forward network---'
 	print 'Test loss:', score[0]
@@ -127,8 +140,6 @@ def classification(x_train_, xy_train_):
 	x_input = ae_model.encoder.predict(x_test)
 	x_pred = x_input[:] + vector_addition(x_train_, xy_train_)[0]
 	F_input = Input(shape=(LATENT_SIZE,), name='va_input')
-	# F_layers = Activation('relu')(F_input)
-	# F_layers = Activation(relu_advanced)(F_input)
 	F_layers = class_output(drop_x(ae_model.decoder_layers(F_input)))
 	F = Model(F_input, F_layers)
 
@@ -156,14 +167,14 @@ def neighbours(z, diff_std, layers=1):
 			z_pred[N-i] = np.random.normal(loc=z, scale=diff_std*layer*0.5, size=None)
 	return z_pred
 
-def transition(F, mix=0.2):
-	y = np.zeros((100, 10))
+def transition(F, z, mix=0.2):
+	new_z = np.zeros((100,LATENT_SIZE))
 	for i in range(10):
-		y[i*10:(i+1)*10] = mix*np.eye(10)
-		y[i*10:(i+1)*10,i] = 1
+		new_z[i*10:(i+1)*10,:] = z[i]
+		new_z[i*10:(i+1)*10] = (1.0-mix)*new_z[i*10:(i+1)*10] + mix*z
 
-	gen = F.predict(y)
-	viz.plot_transition(gen)
+	gen = F.predict(new_z)
+	viz.plot_matrix(gen)
 
 
 
@@ -181,18 +192,12 @@ def generation(y_train_, xy_train_):
 	gen = F.predict(y_test_gen)
 	viz.plot(gen)
 
-	# generate transitions from one number to another
-	for mix in range(1,11):
-		transition(F, mix*0.1)
-
 	# Vector addition
 	diff_mean, diff_std = vector_addition(y_train_, xy_train_)
 
 	x_input = ae_model.encoder.predict(y_test_gen)
 	x_pred = x_input[:] + diff_mean
 	F_input = Input(shape=(LATENT_SIZE,), name='va_input')
-	# F_layers = Activation('relu')(F_input)
-	# F_layers = Activation(relu_advanced)(F_input)
 	F_layers = gen_output(drop_y(ae_model.decoder_layers(F_input)))
 	F = Model(F_input, F_layers)
 
@@ -215,6 +220,11 @@ def generation(y_train_, xy_train_):
 		g_input = neighbours(x_input[i], diff_std, layers=2)
 		gen = F.predict(g_input)
 		viz.plot_number(gen)
+
+	# generate transitions from one number to another
+	for mix in range(5,0,-1):
+		transition(F, x_input, mix*0.1)
+
 
 
 print 'Standard feature extraction'
