@@ -30,6 +30,7 @@ class Flatten_AE():
 # 	def __init__(self, input_size, latent_size, img_size):
 # 		self.encoder_input = Input(shape=(input_size,), name='enc_input') 
 # 		x = Dense(img_size**2, activation='relu', name='enc_dense_1')(self.encoder_input)
+# 		x = Dropout(0.2, name='encoder_drop')(x)
 # 		x = Reshape((img_size, img_size, 1), name='enc_reshape')(x)
 # 		x = Conv2D(16, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
 # 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_1')(x)
@@ -53,11 +54,11 @@ class Flatten_AE():
 # 		dec_5 = UpSampling2D((2, 2), name='dec_sampling_2')
 # 		dec_6 = Conv2D(16, (3, 3), activation='relu', name='dec_conv_3')
 # 		dec_7 = UpSampling2D((2, 2), name='dec_sampling_3')
-# 		dec_8 = Conv2D(1, (3, 3), activation='relu', padding='same', name='dec_conv_4')
-# 		dec_9 = Flatten(name='dec_flatten')
-# 		dec_10 = Dense(input_size, activation='sigmoid', name='dec_dense_2')
+# 		# dec_8 = Conv2D(1, (3, 3), activation='relu', padding='same', name='dec_conv_4')
+# 		dec_8 = Flatten(name='dec_flatten')
+# 		dec_9 = Dense(input_size, activation='sigmoid', name='dec_dense_2')
 
-# 		self.decoder_layers = lambda x: dec_10(dec_9(dec_8(dec_7(dec_6(dec_5(dec_4(dec_3(dec_2(dec_1(dec_0(x)))))))))))
+# 		self.decoder_layers = lambda x: dec_9(dec_8(dec_7(dec_6(dec_5(dec_4(dec_3(dec_2(dec_1(dec_0(x))))))))))
 # 		decoded_layer = self.decoder_layers(self.encoder_layer)
 
 # 		self.ae = Model(self.encoder_input, decoded_layer)
@@ -102,8 +103,9 @@ class CNN_AE():
 		x = BatchNormalization()(x)
 		x = Flatten(name='enc_flattent')(x)
 		# x = Dense(3136, activation='relu')(x)
+		# x = Dropout(0.2)(x) #0.25
 		x = Dense(128, activation='relu')(x)
-		x = Dropout(0.1)(x) # 0.5
+		x = Dropout(0.2)(x) # 0.5
 		self.encoder_layer = Dense(latent_size, activation='sigmoid', name='enc_dense_2')(x)
 
 		dec_0 = Dense(128, activation='relu', name='dec_dense_1')

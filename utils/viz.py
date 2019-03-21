@@ -2,6 +2,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
+#####
+# Plot 10 digits in a row.
+#####
 def plot(gen):
 	num_rows = 1
 	num_cols = 10
@@ -19,6 +22,9 @@ def plot(gen):
 	plt.show()
 	plt.close()
 
+#####
+# Plot in concentric squares
+#####
 def plot_number(gen):
 	n = int(math.sqrt(len(gen)))
 	f, ax = plt.subplots(n, n, figsize=(n,n),
@@ -75,3 +81,22 @@ def plot_number(gen):
 # 			print res
 
 # func(a)
+
+
+#####
+# Plot 10x10 digits
+#####
+def plot_transition(gen):
+	num_rows = 10
+	num_cols = 10
+	f, ax = plt.subplots(num_rows, num_cols, figsize=(num_rows,num_cols),
+						gridspec_kw={'wspace':0.03, 'hspace':0.03}, 
+						squeeze=True)
+	for r in range(num_rows):
+		for c in range(num_cols):
+			image_index = r * num_cols + c
+			ax[r,c].axis("off")
+			ax[r,c].imshow(gen[image_index], cmap='gray')
+			# ax[r,c].set_title('No. %d' % image_index)
+	plt.show()
+	plt.close()

@@ -53,6 +53,12 @@ Input handwritten digit, output class as a probability vector.
     <td>CNN</td>
   </tr>
   <tr>
+    <td>End-to-End</td>
+    <td>-</td>
+    <td>0.9797</td>
+    <td>0.9907</td>
+  </tr>
+  <tr>
     <td>Feature extraction</td>
     <td>-</td>
     <td>0.8989</td>
@@ -131,7 +137,7 @@ Input one-hot encoded label, output handwritten digit.
   </tr>
 </table>
 
-Adding gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. (STD is the standard deviation of the difference computed for ADD.)
+Adding random gaussian noise to the latent representation of the generated digit. The center digit has zero noise, the digits on the first layer around the center has 50% of the mean STD, and those on the last layer has 100% of the mean STD. (STD is the standard deviation of the difference computed for ADD.)
 
 <table>
   <tr>
@@ -147,4 +153,4 @@ Adding gaussian noise to the latent representation of the generated digit. The c
 
 ## Remarks
 
-- PCL requires good latent representations to guarantee high performance in downstream tasks.
+- PCL requires good latent representations to guarantee high performance for downstream tasks.

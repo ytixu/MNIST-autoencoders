@@ -23,7 +23,7 @@ IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
 LATENT_SIZE = 32
 EPOCHS = 50
-EPOCHS_COMPLETE = 4
+EPOCHS_COMPLETE = 5
 BATCH_SIZE = 64
 
 ##############
@@ -43,7 +43,7 @@ if args['load_path']:
 	ae_model.ae.load_weights(args['load_path'])
 else:
 	ae_model.ae.fit(x_xy_y_train, x_xy_y_train, epochs=EPOCHS, shuffle=True, batch_size=BATCH_SIZE)
-	# ae_model.ae.save(args['save_path'])
+	ae_model.ae.save(args['save_path'])
 
 score = ae_model.ae.evaluate(x_test, x_test, verbose=0)
 print 'Test loss:', score[0]
@@ -156,6 +156,16 @@ def neighbours(z, diff_std, layers=1):
 			z_pred[N-i] = np.random.normal(loc=z, scale=diff_std*layer*0.5, size=None)
 	return z_pred
 
+def transition(F, mix=0.2):
+	y = np.zeros((100, 10))
+	for i in range(10):
+		y[i*10:(i+1)*10] = mix*np.eye(10)
+		y[i*10:(i+1)*10,i] = 1
+
+	gen = F.predict(y)
+	viz.plot_transition(gen)
+
+
 
 def generation(y_train_, xy_train_):
 	gen_layer, z_layer = get_complete_func(y_train_, xy_train_)
@@ -170,6 +180,10 @@ def generation(y_train_, xy_train_):
 
 	gen = F.predict(y_test_gen)
 	viz.plot(gen)
+
+	# generate transitions from one number to another
+	for mix in range(1,11):
+		transition(F, mix*0.1)
 
 	# Vector addition
 	diff_mean, diff_std = vector_addition(y_train_, xy_train_)

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import keras
 from keras.datasets import mnist
 from keras.models import Sequential
-from keras.layers import Dense, Reshape
+from keras.layers import Dense, Reshape, Flatten
 from keras.layers import Conv2D, UpSampling2D
 from keras.utils import to_categorical
 
@@ -25,6 +25,19 @@ model = Sequential([
     Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='dec_conv_4'),
     Reshape((28,28))
 ])
+
+## same for 
+# model = Sequential([
+#     Dense(128, activation='relu', name='dec_dense_1', input_shape=(10,)),
+#     Dense(12544, activation='relu', name='dec_dense_3'),
+#     Reshape((14, 14, 64), name='dec_reshape'),
+#     Conv2D(64, (3, 3), activation='relu', padding='same', name='dec_conv_1'),
+#     UpSampling2D((2, 2), name='dec_sampling_1'),
+#     Conv2D(32, (3, 3), activation='relu', padding='same', name='dec_conv_2'),
+#     Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='dec_conv_3'),
+#     Reshape((28,28))
+# ])
+
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['mae'])
