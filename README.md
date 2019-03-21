@@ -159,3 +159,6 @@ Adding random gaussian noise to the latent representation of the generated digit
 - PCL requires good latent representations to guarantee high performance for downstream tasks.
 <!-- - Digit images generated through PCL is fixed by the input number class. This is different to the generative adversarial framework (or GAN) which can output multiple variations for one number class. 
 - Adding noise the output of SDL can generate blurry or invalid digits, which is not comparable to GAN. However, PCL is much easier to train than GAN. -->
+
+## Publication
+(soon)
