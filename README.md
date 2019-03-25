@@ -160,7 +160,7 @@ Adding random gaussian noise to the latent representation of the generated digit
 <!-- - Digit images generated through PCL is fixed by the input number class. This is different to the generative adversarial framework (or GAN) which can output multiple variations for one number class. 
 - Adding noise the output of SDL can generate blurry or invalid digits, which is not comparable to GAN. However, PCL is much easier to train than GAN. -->
 
-## Publication
+## Reference
 Yi Tian Xu, Yaqiao Li, David Meger, Human motion prediction via pattern completion in latent representation space, CRV 2019 (16th conference on Computer and Robot Vision). [project link](http://www.cim.mcgill.ca/~yxu219/human_motion_prediction.html?)
 
 
