@@ -12,7 +12,7 @@ def get_timestamp_filename():
 	return str(int(time.time()))+'.hdf5'
 
 def parse():
-	model_list = ['flatten', 'cnn']
+	model_list = ['flatten', 'dense_cnn', 'cnn']
 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-r', '--random', action='store_true', help='Random uniform as zero value.')
@@ -23,6 +23,8 @@ def parse():
  
  	if args['model'] == 'cnn':
  		args['save_path'] = get_dir('cnn')+get_timestamp_filename()
+ 	elif args['model'] == 'dense_cnn':
+ 		args['save_path'] = get_dir('dense_cnn')+get_timestamp_filename()
  	else:
  		args['save_path'] = get_dir('flatten')+get_timestamp_filename()
 

@@ -23,17 +23,19 @@ IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
 LATENT_SIZE = 32
 EPOCHS = 50
-EPOCHS_COMPLETE = 10
+EPOCHS_COMPLETE = 5
 BATCH_SIZE = 64
 
 ##############
 # Autoencoder
 if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
+elif args['model'] == 'dense_cnn':
+	ae_model = Dense_CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 10
-	BATCH_SIZE = 64
+	EPOCHS = 12
+	BATCH_SIZE = 128
 
 ae_model.ae.compile(optimizer='adam',
 				loss='binary_crossentropy',
@@ -106,7 +108,7 @@ def vector_addition(x_train_, y_train_):
 
 
 def get_failed_classes(F):
-	predict_labels = F.predict(x_test) 
+	predict_labels = F.predict(x_test)
 	predict_labels = predict_labels.argmax(axis=-1)
 	inc_idx = np.nonzero(predict_labels != y_test_orig)[0]
 	print '# of incorrect predictions: %d/%d' %(len(inc_idx), len(y_test_orig))
@@ -146,6 +148,7 @@ def classification(x_train_, xy_train_):
 	F.compile(optimizer='adam',
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
+	
 
 	score = F.evaluate(x_pred, y_test_orig, verbose=0)
 	print 'Vector addition---'
@@ -186,7 +189,7 @@ def generation(y_train_, xy_train_):
 	gen_layers = gen_output(drop_y(gen_layer))
 	F = Model(ae_model.encoder_input, gen_layers)
 	F.compile(optimizer='adam',
-				loss='sparse_categorical_crossentropy',
+				loss='categorical_crossentropy',
 				metrics=['accuracy'])
 
 	gen = F.predict(y_test_gen)
@@ -202,7 +205,7 @@ def generation(y_train_, xy_train_):
 	F = Model(F_input, F_layers)
 
 	F.compile(optimizer='adam',
-				loss='sparse_categorical_crossentropy',
+				loss='categorical_crossentropy',
 				metrics=['accuracy'])
 
 	gen = F.predict(x_pred)
@@ -211,7 +214,7 @@ def generation(y_train_, xy_train_):
 	# Neighbour
 	G = Model(ae_model.encoder_input, z_layer)
 	G.compile(optimizer='adam',
-				loss='sparse_categorical_crossentropy',
+				loss='categorical_crossentropy',
 				metrics=['accuracy'])
 	x_input = G.predict(y_test_gen)
 
@@ -227,17 +230,17 @@ def generation(y_train_, xy_train_):
 
 
 
-print 'Standard feature extraction'
-feature_extraction()
+# print 'Standard feature extraction'
+# feature_extraction()
 
-print 'Classification via matching'
-classification(x_train, y_train)
+# print 'Classification via matching'
+# classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-print 'Classification via completion (all)'
-all_x_train = np.concatenate((x_train, y_train), axis=0)
-all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-classification(all_x_train, all_y_train)
+# print 'Classification via completion (all)'
+# all_x_train = np.concatenate((x_train, y_train), axis=0)
+# all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+# classification(all_x_train, all_y_train)
 
-print 'Generation via completion'
-generation(y_train, xy_train)
+# print 'Generation via completion'
+# generation(y_train, xy_train)
