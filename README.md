@@ -228,7 +228,7 @@ Adding random gaussian noise to the latent representation of the generated digit
 </table>
 
 
-## Issues
+## Discussion
 
 - PCL requires good latent representations to guarantee high performance for downstream tasks.
 - Adding noise the output of SDL can generate blurry or invalid digits. (This might get fixed by adding an adversarial component?)
