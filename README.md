@@ -57,7 +57,7 @@ Model | Loss (`binary_cross_entropy`) | L1 Distance
 --- | --- | ----
 Flatten | 0.1109 | 0.0492
 Dense+CNN |  0.0897 | 0.0314
-2chan-CNN  | 0.0844 | 0.0285
+2chan-CNN  | 0.0845 | 0.0285
 
 ### Classification 
 Input handwritten digit, output class as a probability vector. 
@@ -99,7 +99,7 @@ Input handwritten digit, output class as a probability vector.
     <td>-</td>
   <tr>
     <td>2chan-CNN </td>
-    <td>0.8360</td>
+    <td>0.8227</td>
     <td>-</td>
     <td>-</td>
   </tr>
@@ -119,8 +119,8 @@ Input handwritten digit, output class as a probability vector.
   <tr>
     <td>2chan-CNN </td>
     <td>-</td>
-    <td>0.4392</td>
-    <td>0.6502</td>
+    <td>0.4348</td>
+    <td>0.6493</td>
   </tr>
   <tr>
     <td rowspan="3">Pattern completion <br>(learn both X --> XY and Y --> XY together)</td>
@@ -138,8 +138,8 @@ Input handwritten digit, output class as a probability vector.
   <tr>
     <td>2chan-CNN </td>
     <td>-</td>
-    <td>0.6026</td>
-    <td>0.9559</td>
+    <td>0.7897</td>
+    <td>0.9501</td>
   </tr>
   <tr>
     <td rowspan="3">Pattern completion (PCL)</td>
@@ -157,8 +157,8 @@ Input handwritten digit, output class as a probability vector.
   <tr>
     <td>2chan-CNN </td>
     <td>-</td>
-    <td>0.9822</td>
-    <td>0.9810</td>
+    <td>0.9844</td>
+    <td>0.9836</td>
   </tr>
 </table>
 
