@@ -1,8 +1,14 @@
 # MNIST with Pattern Completion Learning
 
-### Quick run 
+#### Quick run 
 
-`python ae_classifier.py [--model {flatten,dense_cnn,cnn}]` 
+`python ae_classifier.py --model cnn` 
+
+#### Packages dependencies 
+
+Keras 2.1.3
+
+Matplotlib 2.1.0 (for the figures)
 
 <hr> 
 
@@ -26,12 +32,6 @@ We test between the two completion functions:
 
 We take the average difference `d` between the latent representations of the complete pattern (XY) and the partial pattern (X or Y) in the training set. At inference, on input X', do X'+`d` to obtain the predicted completion for X'. 
 
-#### Packages dependencies 
-
-Keras 2.1.3
-
-Matplotlib 2.1.0 (for the figures)
-
 ## Autoencoding models
 
 We test three different autoencoders. They are all defined in file `autoencoders/models.py`.
@@ -46,8 +46,8 @@ We test three different autoencoders. They are all defined in file `autoencoders
 (`CNN_AE`) Use a dense layer to map input (XY) to a vector that can be reshaped to a size of 28x28. Append this vector to the input digit (X). Reshape the result into a 28x28x2 matrix and treat it as an image (with 2 channels) through a convolutional autoencoder. Use the same decoder as the previous model. 
 
 ## Baselines
-1. FN: end-to-end foward network, `baselines\flatten_classifier.py` and `baselines\flatten_generator.py`.
-2. CNN: end-to-end convolutional network, `baselines\cnn_classifier.py` and `baselines\cnn_generator.py`.
+1. FN: End-to-end foward network, `baselines\flatten_classifier.py` and `baselines\flatten_generator.py`. From [here](https://www.tensorflow.org/tutorials).
+2. CNN: end-to-end convolutional network, `baselines\cnn_classifier.py` and `baselines\cnn_generator.py`. From [here](https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py).
 
 ## Results
 

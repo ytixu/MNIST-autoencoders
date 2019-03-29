@@ -32,6 +32,8 @@ if args['model'] == 'flatten':
 	ae_model = Flatten_AE(INPUT_SIZE, LATENT_SIZE)
 elif args['model'] == 'dense_cnn':
 	ae_model = Dense_CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
+	EPOCHS = 12
+	BATCH_SIZE = 128
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
 	EPOCHS = 12

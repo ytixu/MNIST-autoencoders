@@ -29,8 +29,8 @@ class Dense_CNN_AE():
 	# similar to https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
 	def __init__(self, input_size, latent_size, img_size):
 		self.encoder_input = Input(shape=(input_size,), name='enc_input') 
-		x = Dense((img_size+1)**2, activation='relu', name='enc_dense_1')(self.encoder_input)
-		x = Reshape((img_size+1, img_size+1, 1), name='enc_reshape')(x)
+		x = Dense(img_size**2, activation='relu', name='enc_dense_1')(self.encoder_input)
+		x = Reshape((img_size, img_size, 1), name='enc_reshape')(x)
 		x = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
 		x = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
