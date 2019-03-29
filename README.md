@@ -39,11 +39,11 @@ We test three different autoencoders. They are all defined in file `autoencoders
 ##### Flatten
 (`Flatten_AE`) Encoder and decoder each have three dense layers.
 
-##### Dense + CNN 
+##### Dense+CNN 
 (`Dense_CNN_AE`) Use a dense layer to reduce input (XY) in a vector that can be reshaped to a size of 28x28x1. Then treat the rest as an image through a convolutional autoencoder. Last layer in the decoder is a dense layer that outputs a vector of size 28x28 + 10.
 
-##### CNN 
-(`CNN_AE`) Use a dense layer to map input (XY) to a vector that can be reshaped to a size of 28x28. Append this vector to the input digit (X). Reshape the result into a 28x28x2 matrix and treat it as an image through a convolutional autoencoder. Use the same decoder as the previous model. 
+##### 2chan-CNN 
+(`CNN_AE`) Use a dense layer to map input (XY) to a vector that can be reshaped to a size of 28x28. Append this vector to the input digit (X). Reshape the result into a 28x28x2 matrix and treat it as an image (with 2 channels) through a convolutional autoencoder. Use the same decoder as the previous model. 
 
 ## Baselines
 1. FN: end-to-end foward network, `baselines\flatten_classifier.py` and `baselines\flatten_generator.py`.
@@ -56,8 +56,8 @@ We test three different autoencoders. They are all defined in file `autoencoders
 Model | Loss (`binary_cross_entropy`) | L1 Distance
 --- | --- | ----
 Flatten | 0.1109 | 0.0492
-Dense + CNN |  0.0897 | 0.0314
-CNN | 0.0844 | 0.0285
+Dense+CNN |  0.0897 | 0.0314
+2chan-CNN  | 0.0844 | 0.0285
 
 ### Classification 
 Input handwritten digit, output class as a probability vector. 
@@ -93,12 +93,12 @@ Input handwritten digit, output class as a probability vector.
     <td>-</td>
     <td>-</td>
   <tr>
-    <td>Dense + CNN</td>
+    <td>Dense+CNN</td>
     <td>0.8362</td>
     <td>-</td>
     <td>-</td>
   <tr>
-    <td>CNN</td>
+    <td>2chan-CNN </td>
     <td>0.8360</td>
     <td>-</td>
     <td>-</td>
@@ -111,13 +111,13 @@ Input handwritten digit, output class as a probability vector.
     <td>0.7733</td>
   </tr>
   <tr>
-    <td>Dense + CNN</td>
+    <td>Dense+CNN</td>
     <td>-</td>
     <td>0.5832</td>
     <td>0.7035</td>
   </tr>
   <tr>
-    <td>CNN</td>
+    <td>2chan-CNN </td>
     <td>-</td>
     <td>0.4392</td>
     <td>0.6502</td>
@@ -130,13 +130,13 @@ Input handwritten digit, output class as a probability vector.
     <td>0.9097</td>
   </tr>
   <tr>
-    <td>Dense + CNN</td>
+    <td>Dense+CNN</td>
     <td>-</td>
     <td>0.7641</td>
     <td>0.9067</td>
   </tr>
   <tr>
-    <td>CNN</td>
+    <td>2chan-CNN </td>
     <td>-</td>
     <td>0.6026</td>
     <td>0.9559</td>
@@ -149,13 +149,13 @@ Input handwritten digit, output class as a probability vector.
     <td>0.9212</td>
   </tr>
   <tr>
-    <td>Dense + CNN</td>
+    <td>Dense+CNN</td>
     <td>-</td>
     <td>0.9723</td>
     <td>0.9741</td>
   </tr>
   <tr>
-    <td>CNN</td>
+    <td>2chan-CNN </td>
     <td>-</td>
     <td>0.9822</td>
     <td>0.9810</td>
@@ -192,19 +192,19 @@ Input one-hot encoded label, output handwritten digit.
     <td><img src="./images/flatten_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
-    <td>Dense + CNN + ADD</td>
+    <td>Dense+CNN + ADD</td>
     <td><img src="./images/dense_cnn_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
-    <td>Dense + CNN + SDL</td>
+    <td>Dense+CNN + SDL</td>
     <td><img src="./images/dense_cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
-    <td>CNN + ADD</td>
+    <td>2chan-CNN  + ADD</td>
     <td><img src="./images/cnn_generation_PCL-add.png" alt="Digit generation using PCL model"></td>
   </tr>
   <tr>
-    <td>CNN + SDL</td>
+    <td>2chan-CNN  + SDL</td>
     <td><img src="./images/cnn_generation_PCL.png" alt="Digit generation using PCL model"></td>
   </tr>
 
@@ -217,11 +217,13 @@ Adding random gaussian noise to the latent representation of the generated digit
 <table>
   <tr>
     <td>Flatten</td>
-    <td>CNN</td>
+    <td>Dense+CNN</td>
+    <td>2chan-CNN</td>
   </tr>
   <tr>
-    <td><img width="400px" src="./images/flatten/flatten_neighbours.gif" alt="Digit generation using PCL model"></td>
-    <td><img width="400px" src="./images/dense_cnn/cnn_neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img width="250px" src="./images/flatten/neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img width="250px" src="./images/dense_cnn/neighbours.gif" alt="Digit generation using PCL model"></td>
+    <td><img width="250px" src="./images/cnn/neighbours.gif" alt="Digit generation using PCL model"></td>
   </tr>
 </table>
 
@@ -230,6 +232,7 @@ Adding random gaussian noise to the latent representation of the generated digit
 
 - PCL requires good latent representations to guarantee high performance for downstream tasks.
 - Adding noise the output of SDL can generate blurry or invalid digits. (This might get fixed by adding an adversarial component?)
+- In Dense+CNN the first dense layer mixes the digit image with the label information, thus important features in the digit image might be lost. Alternatively, 2chan-CNN stores the original image as a seperate channel, which can avoid such loss. 
 
 ## Reference
 Yi Tian Xu, Yaqiao Li, David Meger, Human motion prediction via pattern completion in latent representation space, CRV 2019 (16th conference on Computer and Robot Vision). [project link](http://www.cim.mcgill.ca/~yxu219/human_motion_prediction.html?)
