@@ -36,7 +36,7 @@ elif args['model'] == 'dense_cnn':
 	BATCH_SIZE = 128
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 12
+	EPOCHS = 20
 	BATCH_SIZE = 128
 
 ae_model.ae.compile(optimizer='adam',
