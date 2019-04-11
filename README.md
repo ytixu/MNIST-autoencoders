@@ -26,7 +26,7 @@ In our experiement, the proceedure is the following:
 We test between the two completion functions:
 
 1. Vector addition (ADD). 
-2. Single dense layer network (SDL) with bias and no regularization. 
+2. Single dense layer network (SDL) without bias and regularization. 
 
 #### Details on vector addition 
 
