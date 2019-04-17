@@ -5,23 +5,32 @@ import utils.parser as parser
 # parse args
 args = parser.parse()
 
+CLASS_N = 11 if args['extra_class'] else 10
+
 import keras
 from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Lambda, Activation, Reshape
 from keras import backend as K
+
+import tensorflow as tf
+
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import RidgeCV
 
 import utils.data_loader as data_loader
 from autoencoders.models import *
 import utils.viz as viz
 
 # load data
-data1, data2 = data_loader.load(args)
+data1, data2 = data_loader.load(args, CLASS_N)
 x_train_orig, y_train_orig, x_test_orig, y_test_orig = data1
 x_train, y_train, xy_train, x_xy_y_train, x_test, y_test_gen = data2
 
 IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
-LATENT_SIZE = 32
+LATENT_SIZE = 36
 EPOCHS = 50
 EPOCHS_COMPLETE = 5
 BATCH_SIZE = 64
@@ -58,6 +67,20 @@ def relu_advanced(x):
 
 
 ##############
+def scikit_estimators(x, y, x_test):
+	ESTIMATORS = {
+		"Extra trees": ExtraTreesRegressor(n_estimators=10, max_features=32,random_state=0),
+		"K-nn": KNeighborsRegressor(),
+		"Linear regression": LinearRegression(),
+		"Ridge": RidgeCV(),
+	}
+
+	for name, estimator in ESTIMATORS.items():
+		estimator.fit(x, y)
+		yield name, estimator.predict(x_test)
+
+
+##############
 def feature_extraction():
 	ext_train = ae_model.encoder.predict(x_train)
 	ext_test = ae_model.encoder.predict(x_test)
@@ -86,7 +109,7 @@ def get_complete_func(x_train_, y_train_):
 	b_train = ae_model.encoder.predict(y_train_)
 
 	g_input = Input(shape=(LATENT_SIZE,), name='g_input')
-	g_dense = Dense(LATENT_SIZE, activation='sigmoid', use_bias=False, name='g_dense')
+	g_dense = Dense(LATENT_SIZE, activation=ae_model.latent_activation, use_bias=False, name='g_dense')
 	g_layer = g_dense(g_input)
 
 	g = Model(g_input, g_layer)
@@ -99,7 +122,7 @@ def get_complete_func(x_train_, y_train_):
 
 	g_layer_ = g_dense(ae_model.encoder_layer)
 	decoder_layer_ = ae_model.decoder_layers(g_layer_)
-	
+
 	return decoder_layer_, g_layer_
 
 def vector_addition(x_train_, y_train_):
@@ -114,10 +137,10 @@ def get_failed_classes(F):
 	predict_labels = predict_labels.argmax(axis=-1)
 	inc_idx = np.nonzero(predict_labels != y_test_orig)[0]
 	print '# of incorrect predictions: %d/%d' %(len(inc_idx), len(y_test_orig))
-	
-	inc = np.zeros((100,IMG_SIZE,IMG_SIZE))
+
+	inc = np.zeros((CLASS_N**2,IMG_SIZE,IMG_SIZE))
 	for i in inc_idx:
-		inc[predict_labels[i]*10+y_test_orig[i]] = np.reshape(x_test[i,:-10], (IMG_SIZE,IMG_SIZE))
+		inc[predict_labels[i]*CLASS_N+y_test_orig[i]] = np.reshape(x_test[i,:-CLASS_N], (IMG_SIZE,IMG_SIZE))
 
 	viz.plot_matrix(inc, 'Examples of failed predictions (x=True, y=Predicted)')
 
@@ -125,8 +148,8 @@ def get_failed_classes(F):
 def classification(x_train_, xy_train_):
 	class_layer, _ = get_complete_func(x_train_, xy_train_)
 
-	drop_x = Lambda(lambda x: x[:,-10:], output_shape=(10,), name='drop_lambda')
-	class_output = Activation('softmax', name='softmax')
+	drop_x = Lambda(lambda x: x[:,-CLASS_N:], output_shape=(CLASS_N,), name='drop_lambda')
+	class_output = Activation(tf.nn.softmax, name='softmax')
 
 	F_layers = class_output(drop_x(class_layer))
 	F = Model(ae_model.encoder_input, F_layers)
@@ -134,7 +157,9 @@ def classification(x_train_, xy_train_):
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
 
-	get_failed_classes(F)
+
+	if not args['no_display']:
+		get_failed_classes(F)
 
 	score = F.evaluate(x_test, y_test_orig, verbose=0)
 	print 'Forward network---'
@@ -150,13 +175,23 @@ def classification(x_train_, xy_train_):
 	F.compile(optimizer='adam',
 				loss='sparse_categorical_crossentropy',
 				metrics=['accuracy'])
-	
+
 
 	score = F.evaluate(x_pred, y_test_orig, verbose=0)
 	print 'Vector addition---'
 	print 'Test loss:', score[0]
 	print 'Test accuracy:', score[1]
 
+
+	a_train = ae_model.encoder.predict(x_train_)
+        b_train = ae_model.encoder.predict(xy_train_)
+
+	for name, x_pred in scikit_estimators(a_train, b_train, x_input):
+		#x_pred = linear_regression(a_train, b_train, x_input)
+		score = F.evaluate(x_pred, y_test_orig, verbose=0)
+        	print name, '---'
+        	print 'Test loss:', score[0]
+        	print 'Test accuracy:', score[1]
 
 
 ##############
@@ -173,10 +208,10 @@ def neighbours(z, diff_std, layers=1):
 	return z_pred
 
 def transition(F, z, mix=0.2):
-	new_z = np.zeros((100,LATENT_SIZE))
-	for i in range(10):
-		new_z[i*10:(i+1)*10,:] = z[i]
-		new_z[i*10:(i+1)*10] = (1.0-mix)*new_z[i*10:(i+1)*10] + mix*z
+	new_z = np.zeros((CLASS_N**2,LATENT_SIZE))
+	for i in range(CLASS_N):
+		new_z[i*CLASS_N:(i+1)*CLASS_N,:] = z[i]
+		new_z[i*CLASS_N:(i+1)*CLASS_N] = (1.0-mix)*new_z[i*CLASS_N:(i+1)*CLASS_N] + mix*z
 
 	gen = F.predict(new_z)
 	viz.plot_matrix(gen)
@@ -185,7 +220,7 @@ def transition(F, z, mix=0.2):
 
 def generation(y_train_, xy_train_):
 	gen_layer, z_layer = get_complete_func(y_train_, xy_train_)
-	drop_y = Lambda(lambda x: x[:,:-10], output_shape=(IMG_SIZE**2,), name='drop_lambda')
+	drop_y = Lambda(lambda x: x[:,:-CLASS_N], output_shape=(IMG_SIZE**2,), name='drop_lambda')
 	gen_output = Reshape((IMG_SIZE, IMG_SIZE))
 
 	gen_layers = gen_output(drop_y(gen_layer))
@@ -220,7 +255,7 @@ def generation(y_train_, xy_train_):
 				metrics=['accuracy'])
 	x_input = G.predict(y_test_gen)
 
-	for i in range(10):
+	for i in range(CLASS_N):
 		print i
 		g_input = neighbours(x_input[i], diff_std, layers=2)
 		gen = F.predict(g_input)
