@@ -74,7 +74,7 @@ Input handwritten digit, output class as a probability vector.
   <tr>
     <th rowspan="2">Learning paradigm</th>
     <th rowspan="2">Model</th>
-    <th colspan="3">Accuracy</th>
+    <th colspan="5">Accuracy</th>
   </tr>
   <tr>
     <td></td>
@@ -101,7 +101,7 @@ Input handwritten digit, output class as a probability vector.
     <td>-</td>
   </tr>
   <tr>
-    <td rowspan="3">Feature extraction</td>
+    <td rowspan="4">Feature extraction</td>
     <td>Flatten</td>
     <td>0.8989</td>
     <td>-</td>
@@ -134,7 +134,7 @@ Input handwritten digit, output class as a probability vector.
     <td>-</td>
   </tr>
   <tr>
-    <td rowspan="3">Pattern matching</td>
+    <td rowspan="4">Pattern matching</td>
     <td>Flatten</td>
     <td>-</td>
     <td>0.7457</td>
@@ -167,7 +167,7 @@ Input handwritten digit, output class as a probability vector.
     <td>0.7859</td>
   </tr>
   <tr>
-    <td rowspan="3">Pattern completion <br>(learn both X --> XY<br>and Y --> XY together)</td>
+    <td rowspan="4">Pattern completion <br>(learn both X --> XY<br>and Y --> XY together)</td>
     <td>Flatten</td>
     <td>-</td>
     <td>0.8498</td>
@@ -200,7 +200,7 @@ Input handwritten digit, output class as a probability vector.
     <td>0.9642</td>
   </tr>
   <tr>
-    <td rowspan="3">Pattern completion (PCL)</td>
+    <td rowspan="4">Pattern completion (PCL)</td>
     <td>Flatten</td>
     <td>-</td>
     <td>0.9240</td>
