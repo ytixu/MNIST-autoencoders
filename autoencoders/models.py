@@ -5,6 +5,8 @@ from keras.models import Model
 from keras.layers import Input, Dense, Dropout, Lambda, Activation, Reshape, Flatten, BatchNormalization
 from keras.layers import Conv2D, MaxPooling2D, UpSampling2D, Conv2DTranspose
 from keras.layers import concatenate, add
+import keras.backend as K
+import tensorflow as tf
 
 class Flatten_AE():
 	# similar to the Deep autoencoder in https://blog.keras.io/building-autoencoders-in-keras.html
@@ -60,7 +62,7 @@ class Dense_CNN_AE():
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 		print self.ae.summary()
 
-class CNN_AEs():
+class CNN_AE():
 	def __init__(self, input_size, latent_size, img_size):
 		self.latent_activation = 'sigmoid'
 		image2d_size = img_size**2
@@ -97,27 +99,22 @@ class CNN_AEs():
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 		print self.ae.summary()
 
-class CNN_AE():
+class CNN_AEs():
 	def __init__(self, input_size, latent_size, img_size):
 		self.latent_activation = 'sigmoid'
-		image2d_size = img_size**2
 		reshape = Reshape((img_size, img_size, 1))
 
 		self.encoder_input = Input(shape=(input_size,), name='enc_input')
-		sup_x = reshape(Dense(image2d_size, activation='relu', name='enc_dense_1')(self.encoder_input))
-		#sup_x = Dropout(0.2)(sup_x)
-		label = Lambda(lambda x: x[:,image2d_size:])(self.encoder_input)
-		x = reshape(Lambda(lambda x: x[:,:image2d_size])(self.encoder_input))
+		labels = reshape(Dense(img_size**2, activation='relu', name='enc_dense_1')(self.encoder_input))
+		labels = Dropout(0.2)(labels)
+		digits = reshape(Lambda(lambda x: x[:,:-10])(self.encoder_input))
+		x = concatenate([digits, labels], axis=-1)
 
-		enc_1 = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')
-		enc_2 = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')
-		enc_3 = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')
-		enc_4 = BatchNormalization()
-		enc_5 = Flatten(name='enc_flattent')
-		x = enc_5(enc_4(enc_3(enc_2(enc_1(x)))))
-		sup_x = enc_5(BatchNormalization()(enc_3(enc_2(enc_1(sup_x)))))
-
-		x = add([x, sup_x])
+		x = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
+		x = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
+		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
+		x = BatchNormalization()(x)
+		x = Flatten(name='enc_flattent')(x)
 		x = Dense(128, activation='relu')(x)
 		x = Dropout(0.2)(x)
 		self.encoder_layer = Dense(latent_size, activation=self.latent_activation, name='enc_dense_2')(x)
@@ -130,10 +127,19 @@ class CNN_AE():
 		dec_6 = Conv2D(32, (3, 3), activation='relu', padding='same', name='dec_conv_2')
 		dec_7 = Flatten(name='dec_flatten')
 		dec_8 = Dense(input_size, activation='sigmoid', name='dec_dense_4')
+		dec_9 = Lambda(lambda x: K.concatenate([x[:,:-10], tf.nn.softmax(x[:,-10:])], axis=-1))
 
-		self.decoder_layers = lambda x: dec_8(dec_7(dec_6(dec_5(dec_4(dec_3(dec_2(dec_1(x))))))))
+		self.decoder_layers = lambda x: dec_9(dec_8(dec_7(dec_6(dec_5(dec_4(dec_3(dec_2(dec_1(x)))))))))
 		decoded_layer = self.decoder_layers(self.encoder_layer)
 
 		self.ae = Model(self.encoder_input, decoded_layer)
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 		print self.ae.summary()
+
+		def custum_loss(yTrue, yPred):
+			return K.mean(K.binary_crossentropy(yTrue[:,:-10], yPred[:,:-10])) + K.mean(K.binary_crossentropy(yTrue[:,-10:], yPred[:,-10:]))
+
+		self.ae.compile(optimizer='adam',
+                               loss=custum_loss,
+                               metrics=['mae'])
+

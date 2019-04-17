@@ -30,7 +30,7 @@ x_train, y_train, xy_train, x_xy_y_train, x_test, y_test_gen = data2
 
 IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
-LATENT_SIZE = 36
+LATENT_SIZE = 32
 EPOCHS = 50
 EPOCHS_COMPLETE = 5
 BATCH_SIZE = 64
@@ -86,7 +86,7 @@ def feature_extraction():
 	ext_test = ae_model.encoder.predict(x_test)
 
 	ext_input = Input(shape=(LATENT_SIZE,), name='ext_input')
-	ext_output = Dense(10, activation='softmax')(ext_input)
+	ext_output = Dense(10, activation=tf.nn.softmax)(ext_input)
 
 	ext = Model(ext_input, ext_output)
 	ext.compile(optimizer='adam',
@@ -267,17 +267,17 @@ def generation(y_train_, xy_train_):
 
 
 
-# print 'Standard feature extraction'
-# feature_extraction()
+print 'Standard feature extraction'
+feature_extraction()
 
-# print 'Classification via matching'
-# classification(x_train, y_train)
+print 'Classification via matching'
+classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-# print 'Classification via completion (all)'
-# all_x_train = np.concatenate((x_train, y_train), axis=0)
-# all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-# classification(all_x_train, all_y_train)
+print 'Classification via completion (all)'
+all_x_train = np.concatenate((x_train, y_train), axis=0)
+all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+classification(all_x_train, all_y_train)
 
 # print 'Generation via completion'
 # generation(y_train, xy_train)
