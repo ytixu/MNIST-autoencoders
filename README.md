@@ -37,7 +37,7 @@ We test three different autoencoders. They are all defined in file `autoencoders
 (`CNN_AE`) Use a dense layer to map input (XY) to a vector that can be reshaped to a size of 28x28. Append this vector to the input digit (X). Reshape the result into a 28x28x2 matrix and treat it as an image (with 2 channels) through a convolutional autoencoder. Use the same decoder as the previous model.
 
 ##### Reweight-CNN
-Same as 2chan-CNN, but with distinguishing the kind of data X and Y represents. Before outputting XY, Y is passed through a softmax layer. The loss function is modified to treat the loss of X and the loss of Y with equal weights.
+(`RW_CNN`) Same as 2chan-CNN, but with distinguishing the kind of data X and Y represents. Before outputting XY, Y is passed through a softmax layer. The loss function is modified to treat the loss of X and the loss of Y with equal weights.
 
 ## Completion Functions
 
