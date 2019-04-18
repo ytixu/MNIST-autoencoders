@@ -1,5 +1,7 @@
 # MNIST with Pattern Completion Learning
 
+Note: this project is ongoing.
+
 #### Quick run
 
 `python ae_classifier.py --model cnn`
