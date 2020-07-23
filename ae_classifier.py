@@ -30,9 +30,9 @@ x_train, y_train, xy_train, x_xy_y_train, x_test, y_test_gen = data2
 
 IMG_SIZE = x_train_orig.shape[1]
 INPUT_SIZE = x_train.shape[1]
-LATENT_SIZE = 32
-EPOCHS = 50
-EPOCHS_COMPLETE = 5
+LATENT_SIZE = 36
+EPOCHS = 12
+EPOCHS_COMPLETE = 15
 BATCH_SIZE = 64
 
 ##############
@@ -45,12 +45,17 @@ elif args['model'] == 'dense_cnn':
 	BATCH_SIZE = 128
 elif args['model'] == 'cnn':
 	ae_model = CNN_AE(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
-	EPOCHS = 20
+	EPOCHS = 12
 	BATCH_SIZE = 128
+elif args['model'] == 'rw_cnn':
+	ae_model = RW_CNN(INPUT_SIZE, LATENT_SIZE, IMG_SIZE)
+        EPOCHS = 12
+        BATCH_SIZE = 128
 
-ae_model.ae.compile(optimizer='adam',
-				loss='binary_crossentropy',
-				metrics=['mae'])
+
+#ae_model.ae.compile(optimizer='adam',
+#				loss='binary_crossentropy',
+#				metrics=['mae'])
 
 if args['load_path']:
 	ae_model.ae.load_weights(args['load_path'])
@@ -69,10 +74,10 @@ def relu_advanced(x):
 ##############
 def scikit_estimators(x, y, x_test):
 	ESTIMATORS = {
-		"Extra trees": ExtraTreesRegressor(n_estimators=10, max_features=32,random_state=0),
+		# "Extra trees": ExtraTreesRegressor(n_estimators=10, max_features=32,random_state=0),
 		"K-nn": KNeighborsRegressor(),
 		"Linear regression": LinearRegression(),
-		"Ridge": RidgeCV(),
+		# "Ridge": RidgeCV(),
 	}
 
 	for name, estimator in ESTIMATORS.items():
@@ -116,7 +121,7 @@ def get_complete_func(x_train_, y_train_):
 
 	g.compile(optimizer='adam',
 					loss='mean_squared_error',
-					metrics=['mae'])
+					metrics=['mse'])
 
 	g.fit(a_train, b_train, epochs=EPOCHS_COMPLETE, shuffle=True, batch_size=16)
 
@@ -267,17 +272,17 @@ def generation(y_train_, xy_train_):
 
 
 
-print 'Standard feature extraction'
-feature_extraction()
+#print 'Standard feature extraction'
+#feature_extraction()
 
-print 'Classification via matching'
-classification(x_train, y_train)
+#print 'Classification via matching'
+#classification(x_train, y_train)
 print 'Classification via completion'
 classification(x_train, xy_train)
-print 'Classification via completion (all)'
-all_x_train = np.concatenate((x_train, y_train), axis=0)
-all_y_train = np.concatenate((xy_train, xy_train), axis=0)
-classification(all_x_train, all_y_train)
+#print 'Classification via completion (all)'
+#all_x_train = np.concatenate((x_train, y_train), axis=0)
+#all_y_train = np.concatenate((xy_train, xy_train), axis=0)
+#classification(all_x_train, all_y_train)
 
 # print 'Generation via completion'
 # generation(y_train, xy_train)

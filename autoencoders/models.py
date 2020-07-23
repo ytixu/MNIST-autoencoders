@@ -29,6 +29,10 @@ class Flatten_AE():
 		self.ae = Model(self.encoder_input, decoder_layer)
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 
+		self.ae.compile(optimizer='adam',
+				loss='binary_crossentropy',
+				metrics=['mae'])
+		
 class Dense_CNN_AE():
 	# similar to https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py
 	def __init__(self, input_size, latent_size, img_size):
@@ -62,6 +66,10 @@ class Dense_CNN_AE():
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 		print self.ae.summary()
 
+		self.ae.compile(optimizer='adam',
+				loss='binary_crossentropy',
+				metrics=['mae'])
+
 class CNN_AE():
 	def __init__(self, input_size, latent_size, img_size):
 		self.latent_activation = 'sigmoid'
@@ -79,11 +87,11 @@ class CNN_AE():
 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
 		x = BatchNormalization()(x)
 		x = Flatten(name='enc_flattent')(x)
-		x = Dense(128, activation='relu')(x)
+		x = Dense(256, activation='relu')(x)
 		x = Dropout(0.2)(x) 
 		self.encoder_layer = Dense(latent_size, activation=self.latent_activation, name='enc_dense_2')(x)
 
-		dec_1 = Dense(128, activation='relu', name='dec_dense_1')
+		dec_1 = Dense(256, activation='relu', name='dec_dense_1')
 		dec_2 = Dense(12544, activation='relu', name='dec_dense_3')
 		dec_3 = Reshape((14, 14, 64), name='dec_reshape')
 		dec_4 = Conv2D(64, (3, 3), activation='relu', padding='same', name='dec_conv_1')
@@ -99,7 +107,11 @@ class CNN_AE():
 		self.encoder = Model(self.encoder_input, self.encoder_layer)
 		print self.ae.summary()
 
-class CNN_AEs():
+		self.ae.compile(optimizer='adam',
+				loss='binary_crossentropy',
+				metrics=['mae'])
+
+class RW_CNN_back():
 	def __init__(self, input_size, latent_size, img_size):
 		self.latent_activation = 'sigmoid'
 		reshape = Reshape((img_size, img_size, 1))
@@ -115,11 +127,11 @@ class CNN_AEs():
 		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
 		x = BatchNormalization()(x)
 		x = Flatten(name='enc_flattent')(x)
-		x = Dense(128, activation='relu')(x)
+		x = Dense(256, activation='relu')(x)
 		x = Dropout(0.2)(x)
 		self.encoder_layer = Dense(latent_size, activation=self.latent_activation, name='enc_dense_2')(x)
 
-		dec_1 = Dense(128, activation='relu', name='dec_dense_1')
+		dec_1 = Dense(256, activation='relu', name='dec_dense_1')
 		dec_2 = Dense(12544, activation='relu', name='dec_dense_3')
 		dec_3 = Reshape((14, 14, 64), name='dec_reshape')
 		dec_4 = Conv2D(64, (3, 3), activation='relu', padding='same', name='dec_conv_1')
@@ -137,9 +149,61 @@ class CNN_AEs():
 		print self.ae.summary()
 
 		def custum_loss(yTrue, yPred):
-			return K.mean(K.binary_crossentropy(yTrue[:,:-10], yPred[:,:-10])) + K.mean(K.binary_crossentropy(yTrue[:,-10:], yPred[:,-10:]))
+			ce_digit = K.mean(K.binary_crossentropy(yTrue[:,:-10], yPred[:,:-10]))
+			ce_label = K.mean(K.binary_crossentropy(yTrue[:,-10:], yPred[:,-10:]))
+			#l2_digit = K.mean(K.square(yTrue[:,:-10] - yPred[:,:-10]))
+			#l2_label = K.mean(K.square(yTrue[:,-10:] - yPred[:,-10:]))
+			return ce_digit + ce_label #+ l2_digit + l2_label
 
 		self.ae.compile(optimizer='adam',
                                loss=custum_loss,
                                metrics=['mae'])
 
+class RW_CNN():
+	def __init__(self, input_size, latent_size, img_size):
+		self.latent_activation = 'sigmoid'
+		reshape = Reshape((img_size, img_size, 1))
+
+		self.encoder_input = Input(shape=(input_size,), name='enc_input')
+		labels = Lambda(lambda x: x[:,-10:])(self.encoder_input)
+		# labels = reshape(Dense(img_size**2, activation='relu', name='enc_dense_1')(labels))
+		# labels = Dropout(0.2)(labels)
+		x = reshape(Lambda(lambda x: x[:,:-10])(self.encoder_input))
+		# x = concatenate([digits, labels], axis=-1)
+
+		x = Conv2D(32, (3, 3), activation='relu', padding='same', name='enc_conv_1')(x)
+		x = Conv2D(64, (3, 3), activation='relu', padding='same', name='enc_conv_2')(x)
+		x = MaxPooling2D((2, 2), padding='same', name='enc_pool_2')(x)
+		x = BatchNormalization()(x)
+		x = concatenate([Flatten(name='enc_flattent')(x), labels], axis=-1) 
+		x = Dense(256, activation='relu')(x)
+		x = Dropout(0.2)(x)
+		self.encoder_layer = Dense(latent_size, activation=self.latent_activation, name='enc_dense_2')(x)
+
+		dec_1 = Dense(256, activation='relu', name='dec_dense_1')
+		dec_2 = Dense(12544, activation='relu', name='dec_dense_3')
+		dec_3 = Reshape((14, 14, 64), name='dec_reshape')
+		dec_4 = Conv2D(64, (3, 3), activation='relu', padding='same', name='dec_conv_1')
+		dec_5 = UpSampling2D((2, 2), name='dec_sampling_1')
+		dec_6 = Conv2D(32, (3, 3), activation='relu', padding='same', name='dec_conv_2')
+		dec_7 = Flatten(name='dec_flatten')
+		dec_8 = Dense(input_size, activation='sigmoid', name='dec_dense_4')
+		dec_9 = Lambda(lambda x: K.concatenate([x[:,:-10], t.fnn.softmax(x[:,-10:])], axis=-1))
+
+		self.decoder_layers = lambda x: dec_9(dec_8(dec_7(dec_6(dec_5(dec_4(dec_3(dec_2(dec_1(x)))))))))
+		decoded_layer = self.decoder_layers(self.encoder_layer)
+
+		self.ae = Model(self.encoder_input, decoded_layer)
+		self.encoder = Model(self.encoder_input, self.encoder_layer)
+		print self.ae.summary()
+
+		def custum_loss(yTrue, yPred):
+			ce_digit = K.mean(K.binary_crossentropy(yTrue[:,:-10], yPred[:,:-10]))
+			ce_label = K.mean(K.binary_crossentropy(yTrue[:,-10:], yPred[:,-10:]))
+			#l2_digit = K.mean(K.square(yTrue[:,:-10] - yPred[:,:-10]))
+			#l2_label = K.mean(K.square(yTrue[:,-10:] - yPred[:,-10:]))
+			return ce_digit + ce_label #+ l2_digit + l2_label
+
+		self.ae.compile(optimizer='adam',
+                               loss=custum_loss,
+                               metrics=['mae'])
